@@ -35,8 +35,29 @@ supplied at `docker run` time. Catalog row: `ImageRepository=ghcr.io/ericngo1972
 Run it manually:
 
 ```bash
-docker run -d -p 8080:8080 -e EMBED_API_KEY=your-secret-key ghcr.io/ericngo1972/embedding:latest
+docker run -d -p 8080:8080 -e EMBED_API_KEY=your-secret-key \
+  --memory=3g ghcr.io/ericngo1972/embedding:latest
 ```
+
+## Resource requirements
+
+This service is **heavier than the .NET MapleKiosk apps** — size hosts accordingly.
+
+| Resource | Need | Notes |
+|---|---|---|
+| **RAM** | ~1.7–2.2 GB steady-state; **set a 3 GB limit** | Starts in ~1.5 GB; a tight limit risks OOM under concurrent / large-batch requests. |
+| **Disk (image)** | ~2.5–3 GB uncompressed | `python:3.12-slim` + torch-CPU + deps + the baked ~1.1 GB model. Ensure free space for the pull. |
+| **CPU / GPU** | CPU-only | Uses the torch-CPU build — no GPU / VRAM required. |
+
+What changes the numbers:
+
+- **Batch size matters most.** A single short string is cheap; sending hundreds of long
+  texts in one `input` array spikes activation memory — lean toward 4 GB if callers batch heavily.
+- **`--workers`.** Currently `--workers 1`. Each extra uvicorn worker loads its **own** full
+  copy of the model (~1.5 GB each) — don't raise it without multiplying RAM. On CPU, prefer
+  batching over more workers for throughput.
+
+Provisioner catalog: register with a **3 GB memory limit**, `InternalPort=8080`.
 
 ## Production deployment
 
