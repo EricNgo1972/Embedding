@@ -1,0 +1,15 @@
+[Unit]
+Description=Phoebus Embedding Service
+After=network.target
+
+[Service]
+User=eric
+WorkingDirectory=/var/www/embedding-service
+# Set your real key here (or use EnvironmentFile=/etc/embedding-service.env)
+Environment=EMBED_API_KEY=CHANGE_ME
+ExecStart=/var/www/embedding-service/venv/bin/python -m uvicorn app:app --host 0.0.0.0 --port 8000 --workers 1
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

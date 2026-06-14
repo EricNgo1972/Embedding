@@ -1,0 +1,13 @@
+# Pinned to the versions running in production on 192.168.2.5 (/var/www/embedding-service/venv)
+# NOTE: torch is the CPU build. For a GPU server, install a matching CUDA torch wheel instead, e.g.:
+#   pip install torch==2.10.0 --index-url https://download.pytorch.org/whl/cu124
+# CPU install:
+#   pip install torch==2.10.0+cpu --index-url https://download.pytorch.org/whl/cpu
+#   pip install -r requirements.txt
+fastapi==0.129.0
+uvicorn==0.41.0
+sentence-transformers==5.2.3
+transformers==5.2.0
+torch==2.10.0+cpu
+pydantic==2.12.5
+numpy==2.2.6
