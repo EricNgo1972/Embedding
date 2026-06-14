@@ -15,8 +15,28 @@ OpenAI-compatible text embedding web service (FastAPI + sentence-transformers).
 
 - `app.py` — the service
 - `requirements.txt` — pinned dependency versions (matches production)
+- `Dockerfile` — container image (model baked in, listens on 8080)
+- `.github/workflows/release_container.yml` — builds + pushes the image to GHCR
 - `embedding.service` — systemd unit template
 - `deploy.sh` — one-shot installer for a fresh Linux server
+
+## Container release (like the other MapleKiosk apps)
+
+Run the **Release Container** workflow (Actions tab → *Release Container* → Run workflow,
+enter a version like `1.0.0`). It builds the image and pushes:
+
+- `ghcr.io/ericngo1972/embedding:<version>`
+- `ghcr.io/ericngo1972/embedding:latest`
+
+The provisioner maps/health-checks **internal port 8080**, and `EMBED_API_KEY` must be
+supplied at `docker run` time. Catalog row: `ImageRepository=ghcr.io/ericngo1972/embedding`,
+`InternalPort=8080`.
+
+Run it manually:
+
+```bash
+docker run -d -p 8080:8080 -e EMBED_API_KEY=your-secret-key ghcr.io/ericngo1972/embedding:latest
+```
 
 ## Production deployment
 
